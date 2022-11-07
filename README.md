@@ -135,7 +135,7 @@ Feel free to open an issue in this repository, or contact us in Ed thread.
 
 ## About
 
-This is a class project for COMP 424, McGill University, Winter 2022.
+This is a class project for COMP 424, McGill University, Fall 2022 (it was forked from the past year, Winter 2022).
 
 ## License
 
