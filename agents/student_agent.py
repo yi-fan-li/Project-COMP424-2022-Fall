@@ -88,9 +88,59 @@ class StudentAgent(Agent):
         
         else:
             print("choosing random barrier")
-            valid_barrier = (0,1,2,3)
+            all_barrier = (0,1,2,3)
             cur_bar = chess_board [my_pos[0],my_pos[1]]
-            valid_barrier = [i for i, cur_bar in enumerate(valid_barrier) if cur_bar]
+            valid_barrier = [i for i, cur_bar in enumerate(all_barrier) if cur_bar]
             barrier = random.choice(valid_barrier)
 
         return my_pos, barrier
+
+    def findAllMoves(self, chess_board, my_pos, adv_pos, max_step):
+        moves = ((-1, 0), (0, 1), (1, 0), (0, -1))
+        # BFS
+        cur_step = 0
+        # queue to store position and step
+        state_queue = [(my_pos, 0)]
+        # visited keeps track of visited cases
+        visited = {tuple(my_pos)}
+
+        # checks valid moves within initial position
+        all_moves = []
+        r, c = my_pos
+        for direction in range(4):
+            blocked = chess_board[r, c, direction]
+            if blocked:
+                continue
+            else:
+                all_moves.append((r, c, direction))
+        # iterate till max step is reached
+        while cur_step != max_step:
+            cur_pos, cur_step = state_queue.pop(0)
+            r, c = cur_pos
+            # safe break
+            if cur_step == max_step:
+                break
+            # checks all moves u,r,d,l
+            # checks all dir for wall
+            for direction, move in enumerate(moves):
+                # next position
+                next_pos = (cur_pos[0] + move[0], cur_pos[1] + move[1])
+                x, y = next_pos
+                if 0 < x < chess_board.shape[0] and 0 < y < chess_board.shape[1]:
+                    # checks if there is wall
+                    if chess_board[x, y, direction]:
+                        continue
+                    # skip next position if not valid move or already visited
+                    if next_pos == adv_pos or tuple(next_pos) in visited:
+                        continue
+                    else:
+                        all_moves.append((x, y, direction))
+
+                # update queue and visited positions
+                visited.add(tuple(next_pos))
+                state_queue.append((next_pos, cur_step + 1))
+
+        return all_moves
+
+    def check_valid_input(self, x, y, dir, x_max, y_max):
+        return 0 <= x < x_max and 0 <= y < y_max and dir in self.dir_map
